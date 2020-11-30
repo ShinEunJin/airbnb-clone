@@ -7,12 +7,14 @@
 {% block content %} 
 
     {% for room in rooms %}
-        <a href="{% url "rooms:detail" room.pk %}">
-            <h3>{{room.name}} / ${{room.price}}</h3>
-        
+        <h3>
+            <a href="{% url "rooms:detail" room.pk %}">
+                {{room.name}} / ${{room.price}}
+            </a>
+        </h3>
     {% endfor %}
 
-    <h4>
+    <h5>
     {% if page_obj.has_previous %}
         <a href="?page={{page_obj.previous_page_number}}">Previous</a>
     {% endif %}
@@ -22,6 +24,6 @@
     {% if page_obj.has_next %}
         <a href="?page={{page_obj.next_page_number}}">Next</a>
     {% endif %}
-    </h4> 
+    </h5> 
     
 {% endblock content %}
