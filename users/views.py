@@ -61,10 +61,6 @@ class GithubException(Exception):
     pass
 
 
-class NaverException(Exception):
-    pass
-
-
 def github_login(request):
     client_id = os.environ.get("GH_ID")
     redirect_uri = "http://localhost:8000/users/login/github/callback"
@@ -113,6 +109,7 @@ def github_callback(request):
                             username=email,
                             bio=bio,
                             login_method=models.User.LOGIN_GITHUB,
+                            email_verified=True,
                         )
                         user.set_unusable_password()
                         user.save()
@@ -129,12 +126,16 @@ def github_callback(request):
 
 def naver_login(request):
     client_id = os.environ.get("NV_ID")
-    redirect_url = "http://localhost:8000/users/login/naver/callback"
+    redirect_uri = "http://localhost:8000/users/login/naver/callback"
     state_token = "statetokenimmediate"
     # state_token have to change Random
     return redirect(
-        f"https://nid.naver.com/oauth2.0/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_url}&state={state_token}"
+        f"https://nid.naver.com/oauth2.0/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&state={state_token}"
     )
+
+
+class NaverException(Exception):
+    pass
 
 
 def naver_callback(request):
@@ -165,8 +166,8 @@ def naver_callback(request):
                 message = profile_json.get("message", None)
                 if message is not None:
                     response = profile_json.get("response")
-                    email = response["email"]
-                    name = email[:3]
+                    email = response.get("email")
+                    name = email
                     try:
                         user = models.User.objects.get(email=email)
                         if user.login_method != models.User.LOGIN_NAVER:
@@ -177,6 +178,7 @@ def naver_callback(request):
                             first_name=name,
                             username=email,
                             login_method=models.User.LOGIN_NAVER,
+                            email_verified=True,
                         )
                         user.set_unusable_password()
                         user.save()
@@ -188,4 +190,58 @@ def naver_callback(request):
             raise NaverException()
     except NaverException:
         # send error message
+        return redirect(reverse("users:login"))
+
+
+def kakao_login(request):
+    client_id = os.environ.get("KA_ID")
+    redirect_uri = "http://localhost:8000/users/login/kakao/callback"
+    return redirect(
+        f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+    )
+
+
+class KakaoException(Exception):
+    pass
+
+
+def kakao_callback(request):
+    try:
+        client_id = os.environ.get("KA_ID")
+        redirect_uri = "http://localhost:8000/users/login/kakao/callback"
+        code = request.GET.get("code")
+        token_request = requests.post(
+            f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
+        )
+        token_json = token_request.json()
+        error = token_json.get("error", None)
+        if error is not None:
+            raise KakaoException()
+        access_token = token_json.get("access_token")
+        profile_request = requests.get(
+            "https://kapi.kakao.com/v2/user/me",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        profile_json = profile_request.json()
+        email = profile_json.get("kakao_account").get("email")
+        if email is None:
+            raise KakaoException()
+        nickname = profile_json.get("properties").get("nickname")
+        try:
+            user = models.User.objects.get(email=email)
+            if user.login_method != models.User.LOGIN_KAKAO:
+                raise KakaoException()
+        except models.User.DoesNotExist:
+            user = models.User.objects.create(
+                email=email,
+                username=email,
+                first_name=nickname,
+                login_method=models.User.LOGIN_KAKAO,
+                email_verified=True,
+            )
+            user.set_unusable_password()
+            user.save()
+        login(request, user)
+        return redirect(reverse("core:home"))
+    except KakaoException:
         return redirect(reverse("users:login"))
