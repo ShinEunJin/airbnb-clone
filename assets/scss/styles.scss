@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
+
+.search-box {
+  transition: box-shadow 0.5s linear;
+}
+
+.nav_link {
+  @apply ml-6 border-b-2 border-white flex items-center h-full font-semibold text-lg;
+  a {
+    @apply py-10 px-5;
+  }
+  &:hover {
+    @apply border-blue-400;
+  }
+}
+
+.base_input {
+  @apply w-full border h-20 rounded px-5 text-lg border-gray-400 mb-2;
+  &:focus {
+    @apply outline-none border-teal-500;
+  }
+}
+
+.has_error{
+  input{
+    @apply bg-red-200 border-gray-600;
+  }
+}
+
 @tailwind utilities;

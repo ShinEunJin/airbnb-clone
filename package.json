@@ -17,6 +17,7 @@
     "gulp-postcss": "^8.0.0",
     "gulp-sass": "^4.0.2",
     "node-sass": "^4.13.0",
+    "postcss": "^8.1.13",
     "tailwindcss": "^1.1.3"
   }
 }

@@ -1,11 +1,21 @@
-<div>
-    <a href="{% url "users:github-login" %}">
-        Countinue with Gibhub
+{% load static %}
+<div class="flex flex-col w-full">
+    <a href="{% url "users:github-login" %}" class="w-full border-2 border-gray-600 h-20 mb-2 rounded flex items-center pl-32">
+        <img src="{% static 'img/githublogo.jpg' %}" class="w-12 h-12 rounded-md mr-3">
+        <span class="font-bold text-base">Github Login</span>
     </a>
-    <a href="{% url "users:kakao-login" %}">
-        Countinue with KaKao
+    <a href="{% url "users:kakao-login" %}" class="w-full border-2 border-yellow-400 h-20 mb-2 rounded flex items-center pl-32">
+        <img src="{% static 'img/kakaologo.jpg' %}" class="w-12 h-12 rounded-md mr-3">
+        <span class="font-bold text-base">Kakao Login</span>
     </a>
-    <a href="{% url "users:naver-login" %}">
-        Countinue with Naver
+    <a href="{% url "users:naver-login" %}" class="w-full border-2 border-green-500 h-20 mb-2 rounded flex items-center pl-32">
+        <img src="{% static 'img/naverlogo.jpg' %}" class="w-12 h-12 rounded-md mr-3">
+        <span class="font-bold text-base">Naver Login</span>
     </a>
+</div>
+
+<div class="w-full flex items-center my-3">
+    <div class="w-full h-px bg-gray-400"></div>
+    <span class="mx-2 text-gray-600 font-medium text-base">or</span>
+    <div class="w-full h-px bg-gray-400"></div>
 </div>
