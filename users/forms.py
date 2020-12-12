@@ -87,3 +87,29 @@ class SignUpForm(forms.ModelForm):
         user.username = email
         user.set_password(password)
         user.save()
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.User
+        fields = ("first_name", "last_name", "bio", "language", "currency", "avatar")
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "First Name", "class": "base_input"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Last Name", "class": "base_input"}
+            ),
+            "bio": forms.TextInput(
+                attrs={
+                    "placeholder": "Bio",
+                    "class": "base_input",
+                }
+            ),
+            "language": forms.Select(
+                attrs={"class": "base_input"},
+            ),
+            "currency": forms.Select(
+                attrs={"class": "base_input"},
+            ),
+        }

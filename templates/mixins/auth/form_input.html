@@ -1,5 +1,5 @@
 <div class="w-full {% if field.errors %}has_error{% endif %}">
-    {{field}}  
+    {{field}}
     {% if field.errors %}
         {% for error in field.errors %}
             <span class="text-red-600 font-medium text-sm block -mt-1 mb-3">{{error}}</span>
